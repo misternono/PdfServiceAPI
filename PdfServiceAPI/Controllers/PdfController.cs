@@ -4,7 +4,6 @@ using DotTex2.Parsing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Text;
 using System.Text.Json;
 
 namespace PdfServiceAPI.Controllers;
@@ -47,11 +46,8 @@ public class PdfController : ControllerBase
             ms.Seek(0, SeekOrigin.Begin);
             _logger.LogInformation("PDF generated successfully with {PlaceholderCount} placeholders",
                 request.Placeholders?.Count ?? 0);
-            string base64String = Encoding.UTF8.GetString(ms.ToArray());
 
-            // Decode the base64 string to get the actual PDF bytes
-            byte[] pdfBytes = Convert.FromBase64String(base64String);
-            return Ok(new { file = File(pdfBytes, "application/pdf", $"{Guid.NewGuid()}.pdf"), placeholdersProcessed = request.Placeholders?.Count ?? 0 });
+            return Ok(new { file = File(ms.ToArray(), "application/pdf", $"{Guid.NewGuid()}.pdf"), placeholdersProcessed = request.Placeholders?.Count ?? 0 });
         }
     }
 } 
